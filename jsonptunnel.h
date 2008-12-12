@@ -15,3 +15,12 @@ struct extRequest {
   int numargs;
   int method;
 } extRequest;
+
+//jsonptunnel.c
+void printParams(struct extRequest *req);
+void exit500(char *msg);
+int parseMethod(struct extRequest *req);
+int countArguments(void);
+int parseArguments(struct extRequest *req);
+int parseURL(struct extRequest *req);
+int cgiMain(void);

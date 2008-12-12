@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "cgic.h"
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include "cgic.h"
 #include "jsonptunnel.h"
 
 void printParams(struct extRequest *req) {
@@ -50,7 +50,7 @@ int parseMethod(struct extRequest *req) {
   return 1;
 }
 
-int countArguments() {
+int countArguments(void) {
 
   int count = 0;
   char **array, **arrayStep;
@@ -100,8 +100,9 @@ int parseArguments(struct extRequest *req) {
   int val_size = 0;
   char *val;
   while (*arrayStep) {
-    if(strcmp(*arrayStep, "extURL") != 0 &&
-       strcmp(*arrayStep, "extMethod") != 0) {
+
+    if(strcmp(*arrayStep, URL_PARAM_NAME) != 0 &&
+       strcmp(*arrayStep, METHOD_PARAM_NAME) != 0) {
 
       cgiFormStringSpaceNeeded(*arrayStep, &val_size);
       val = (char*)malloc(sizeof(char)*val_size);
@@ -139,7 +140,7 @@ int parseURL(struct extRequest *req) {
   return 1;
 }
 
-int cgiMain() {
+int cgiMain(void) {
 
   struct extRequest req;
 

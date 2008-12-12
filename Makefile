@@ -1,8 +1,8 @@
 CC=gcc
-LIBS=cgic/libcgic.a
+LIBS=cgic/libcgic.a -lcurl
 INCLUDE=-Icgic
 CFLAGS+=-g -Wall -Icgic
-OBJECTS+=jsonptunnel.o
+OBJECTS+=jsonptunnel.o curl.o
 CGIC_VER = 205
 CGIC_URL = http://www.boutell.com/cgic/cgic$(CGIC_VER).tar.gz
 
