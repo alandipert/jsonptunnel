@@ -5,6 +5,7 @@
 #include "jsonptunnel.h"
 
 void printParams(struct extRequest *req) {
+
 	cgiHeaderContentType("text/plain");
 	//cgiHeaderContentType("text/json");
   fprintf(cgiOut, "Target URL: %s\n", req->url);
@@ -18,6 +19,10 @@ void printParams(struct extRequest *req) {
     default:         break;
   }
 
+  int i;
+  for(i = 0; i < req->numargs; i++) {
+    fprintf(cgiOut, "%i. \"%s\" = \"%s\"\n", i+1, req->args[i]->argName,req->args[i]->argVal);
+  }
 }
 
 void exit500(char *msg) {
@@ -26,6 +31,7 @@ void exit500(char *msg) {
 }
 
 int parseMethod(struct extRequest *req) {
+
   int methodLength = 5;
   char method[methodLength];
 
@@ -44,6 +50,73 @@ int parseMethod(struct extRequest *req) {
   return 1;
 }
 
+int countArguments() {
+
+  int count = 0;
+  char **array, **arrayStep;
+  if(cgiFormEntries(&array) != cgiFormSuccess) {
+    return 0;
+  }
+
+  arrayStep = array;
+  while(*arrayStep) {
+    arrayStep++;
+    count++;
+  }
+
+  cgiStringArrayFree(array);
+
+  //We subtract two for extURL and extMethod
+  return count-2;
+
+}
+
+struct extArg * makeArg(char *name, char *value) {
+  struct extArg *arg = (struct extArg *)malloc(sizeof(struct extArg));
+
+  arg->argName = (char*)malloc(strlen(name)+1);
+  arg->argVal = (char*)malloc(strlen(value)+1);
+
+  strcpy(arg->argName, name);
+  strcpy(arg->argVal, value);
+
+  return arg;
+}
+
+int parseArguments(struct extRequest *req) {
+
+  char **array, **arrayStep;
+  if (cgiFormEntries(&array) != cgiFormSuccess) {
+    return 0;
+  }
+
+  int num_args = countArguments();
+  int arg_num = 0;
+
+  req->numargs = num_args;
+  req->args = (struct extArg **)malloc(sizeof(struct extArg)*num_args);
+
+  arrayStep = array;
+  int val_size = 0;
+  char *val;
+  while (*arrayStep) {
+    if(strcmp(*arrayStep, "extURL") != 0 &&
+       strcmp(*arrayStep, "extMethod") != 0) {
+
+      cgiFormStringSpaceNeeded(*arrayStep, &val_size);
+      val = (char*)malloc(sizeof(char)*val_size);
+      cgiFormString(*arrayStep, val, val_size);
+      req->args[arg_num++] = makeArg(*arrayStep, val);
+      free(val);
+
+    }
+    arrayStep++;
+  }
+  cgiStringArrayFree(array);
+
+  return 1;
+}
+
 int parseURL(struct extRequest *req) {
   //parse URL
   int urlLength = 0;
@@ -53,6 +126,7 @@ int parseURL(struct extRequest *req) {
       if(cgiFormString(URL_PARAM_NAME, req->url, urlLength) == cgiFormSuccess) {
         return 1;
       } else {
+        free(req->url);
         return 0;
       }
     } else {
@@ -75,7 +149,12 @@ int cgiMain() {
   } 
 
   if(!parseMethod(&req)) {
-    exit500("Error parsing HTTP method\n");
+    exit500("Error parsing HTTP method.\n");
+    return EXIT_FAILURE;
+  }
+
+  if(!parseArguments(&req)) {
+    exit500("Error parsing passed arguments or values.\n");
     return EXIT_FAILURE;
   }
 

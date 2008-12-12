@@ -12,5 +12,6 @@ struct extArg {
 struct extRequest {
   char *url;
   struct extArg **args;
+  int numargs;
   int method;
 } extRequest;
