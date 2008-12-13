@@ -1,0 +1,5 @@
+QUICKSTART:
+
+  1. make get-cgic
+  2. make
+  3. copy the created jsonptunnel.cgi to your cgi-bin (or equivalent).
