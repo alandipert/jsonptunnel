@@ -1,9 +1,22 @@
+/*
+ * curl.c
+ *
+ * Use curl/easy API to make
+ * HTTP requests.
+ */
+
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
 #include "cgic.h"
 #include "jsonptunnel.h"
 
+
+/*
+ * Take a struct extRequest and perform
+ * the HTTP action specified in req->
+ * extMethod.
+ */
 void postReq(struct extRequest *req) {
 
   CURL *curl;
