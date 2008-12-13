@@ -1,0 +1,5 @@
+Add "callback" (extCallback) parameter to append a javascript fragment
+to the end of the libcurl output that notifies the parent
+app of a completed request.
+
+A caching mechanism

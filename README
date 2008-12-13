@@ -1,0 +1,27 @@
+QUICKSTART:
+
+  1. make get-cgic
+  2. make
+  3. copy the created jsonptunnel.cgi to your cgi-bin (or equivalent).
+
+REQUIREMENTS:
+
+  1. libcurl
+  2. libcgic - download automatically with 'make get-cgic' command.
+
+  jsonptunnel requires libcurl and libcgic.  libcurl is pretty common,
+  libcgic is not.  the 'make get-cgic' command downloads cgic into the
+  current directory and a subsequent make command will build the library
+  and link against it.
+
+ABOUT:
+
+  This is a C CGI program that takes two required parameters
+  as an HTTP "GET":
+
+  jsonptunnel.cgi?extURL=http://somewhere.com/app/post&extMethod=POST&arg1=
+  lol&arg2=rofl...
+
+  The program then POSTS all passed variables other than extURL, extMethod, and extCallback
+  to the specified URL.  Returned data is printed,
+  and the callback method is appended to the output.
