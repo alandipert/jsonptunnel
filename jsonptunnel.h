@@ -23,4 +23,8 @@ int parseMethod(struct extRequest *req);
 int countArguments(void);
 int parseArguments(struct extRequest *req);
 int parseURL(struct extRequest *req);
+void freeReq(struct extRequest *req); 
 int cgiMain(void);
+
+//curl.c
+void postReq(struct extRequest *req); 

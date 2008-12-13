@@ -23,6 +23,11 @@ void printParams(struct extRequest *req) {
   for(i = 0; i < req->numargs; i++) {
     fprintf(cgiOut, "%i. \"%s\" = \"%s\"\n", i+1, req->args[i]->argName,req->args[i]->argVal);
   }
+
+  fprintf(cgiOut, "CURL output:\n");
+
+  postReq(req);
+
 }
 
 void exit500(char *msg) {
@@ -140,6 +145,19 @@ int parseURL(struct extRequest *req) {
   return 1;
 }
 
+void freeReq(struct extRequest *req) {
+  //free argument strings
+  int i;
+  for(i = 0; i < req->numargs; i++) {
+    free(req->args[i]->argName);
+    free(req->args[i]->argVal);
+  }
+
+  //free URL and method 
+  free(req->url);
+  free(req->args);
+}
+
 int cgiMain(void) {
 
   struct extRequest req;
@@ -160,6 +178,8 @@ int cgiMain(void) {
   }
 
   printParams(&req);
+
+  freeReq(&req);
 
 	return EXIT_SUCCESS;
 
