@@ -14,7 +14,7 @@ ABOUT:
 
 OVERVIEW:
 
-  jsonptunnel.cgi itself looks for three GET variables, two of which 
+  jsonptunnel.cgi itself looks for four GET variables, two of which 
   are required:
 
     REQUIRED:
@@ -27,6 +27,12 @@ OVERVIEW:
       1. extCallback - wraps the off-site output with a function
                        named this parameter, taking the returned
                        data as its only parameter.
+
+      NOT IMPLEMENTED:
+
+        2. extCache - if this is set to anything, look for
+                      a cached version of the query before
+                      fetching.  This feature is not yet implemented.
 
     EXAMPLE:
       

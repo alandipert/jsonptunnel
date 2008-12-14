@@ -1,4 +1,6 @@
-Caching mechanism.
+Caching mechanism. - in progress.
+ Perhaps extCache could be set to a time: IE extCache=5m.  If the cached copy
+ of the request is older than 5 minutes, fetch it again.
 Implement as a FastCGI.
 In curl.c, get curl_easy_escape to work (it's broken for some reason).
 Improve documentation, provide Javascript example using popular libraries.
