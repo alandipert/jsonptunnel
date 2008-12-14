@@ -51,7 +51,7 @@ char * get_cached_filename(struct extRequest *req) {
   for(i = 0; i < num_entries; i++) {
 
     if(strcmp(namelist[i]->d_name, &cache_name[0]) == 0) {
-      filename = (char*)malloc(sizeof(char)*strlen(namelist[i]->d_name));
+      filename = (char*)malloc(sizeof(char)*(strlen(namelist[i]->d_name)+1));
       strcpy(filename, namelist[i]->d_name);
     }
 

@@ -333,6 +333,13 @@ int initReq(struct extRequest *req) {
    */
   parseCallback(req);
 
+  /*
+   * If extCache is set to anything, create
+   * a hash using hash_str in cache.c and 
+   * set req->hash to this number.
+   *
+   * extCache is optional.
+   */
   parseCache(req);
 
   return 1;

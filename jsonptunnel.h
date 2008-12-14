@@ -64,8 +64,8 @@ void printParams(struct extRequest *req);
  */
 char * buildQueryString(CURL *curl, struct extRequest *req);
 int doFetch(struct extRequest *req);
-int doGetReq(struct extRequest *req); 
-int doPostReq(struct extRequest *req); 
+int doGetReq(struct extRequest *req, FILE *outputStream); 
+int doPostReq(struct extRequest *req, FILE *outputStream); 
 
 /*
  * cache.c

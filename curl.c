@@ -21,15 +21,30 @@
  * handling.
  */
 int doFetch(struct extRequest *req) {
-  //if(req->hash == 0) {
+  if(req->hash == 0) {
     if(req->method == METHOD_POST) {
-      return doPostReq(req);
+      return doPostReq(req, cgiOut);
     } else {
-      return doGetReq(req);
+      return doGetReq(req, cgiOut);
     }
-  //} else {
-    //Check for cached objects.
-  //}
+  } else {
+
+    /* Caching placeholder code */
+    exitStatus(500, "Caching not implemented yet.");
+    return 1;
+
+    /*
+     * TODO:
+     *
+     * 1. Check for a file named req->hash.
+     * 2. If it exists, pipe it to cgiOut and return success.
+     * 3. If it doesn't exist, create a new file named req->hash.
+     *    Open a file descriptor for the new file, and pass this as
+     *    the second parameter of the appropriate do*Req function.
+     *    3a. Open the new file and pass its contents to cgiOut.
+     *    3b. Return success.
+     */
+  }
 }
 
 /*
@@ -86,7 +101,7 @@ char * buildQueryString(CURL * curl, struct extRequest *req) {
  * Take a struct extRequest and perform
  * an HTTP get.
  */
-int doGetReq(struct extRequest *req) {
+int doGetReq(struct extRequest *req, FILE *outputStream) {
 
   CURL *curl;
   CURLcode res;
@@ -104,11 +119,11 @@ int doGetReq(struct extRequest *req) {
     curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
 
     //fprintf(cgiOut, escaped_url);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, cgiOut);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
-      fprintf(cgiOut, "%s(", req->callback);
+      fprintf(outputStream, "%s(", req->callback);
     }
 
     res = curl_easy_perform(curl);
@@ -118,7 +133,7 @@ int doGetReq(struct extRequest *req) {
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
-      fprintf(cgiOut, ");");
+      fprintf(outputStream, ");");
     }
 
     //curl_free(escaped_url);
@@ -138,7 +153,7 @@ int doGetReq(struct extRequest *req) {
  * Take a struct extRequest and perform
  * an HTTP post.
  */
-int doPostReq(struct extRequest *req) {
+int doPostReq(struct extRequest *req, FILE *outputStream) {
 
   CURL *curl;
   CURLcode res;
@@ -173,11 +188,11 @@ int doPostReq(struct extRequest *req) {
     //curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
     //curl_easy_setopt(curl, CURLOPT_WRITEHEADER, cgiOut);
     cgiHeaderContentType("text/json");
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, cgiOut);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
-      fprintf(cgiOut, "%s(", req->callback);
+      fprintf(outputStream, "%s(", req->callback);
     }
 
     res = curl_easy_perform(curl);
@@ -192,7 +207,7 @@ int doPostReq(struct extRequest *req) {
     curl_slist_free_all (headerlist);
 
     if(req->callback != NULL) {
-      fprintf(cgiOut, ");");
+      fprintf(outputStream, ");");
     }
 
     /* Things went well, return 1 for good times. */
