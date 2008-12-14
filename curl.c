@@ -2,7 +2,11 @@
  * curl.c
  *
  * Use curl/easy API to make
- * HTTP requests.
+ * HTTP GET/POST requests.
+ *
+ * A lot of this was adapted from the CURL C api
+ * examples:
+ * http://curl.haxx.se/libcurl/c/example.html
  */
 
 #include <string.h>

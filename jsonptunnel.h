@@ -13,6 +13,10 @@
  */
 #define URL_PARAM_NAME "extURL"
 #define METHOD_PARAM_NAME "extMethod"
+
+/*
+ * Optional parameters
+ */
 #define CALLBACK_PARAM_NAME "extCallback"
 
 /*
