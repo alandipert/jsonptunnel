@@ -12,6 +12,33 @@ ABOUT:
   retrieve the result, with an HTTP GET - it 'tunnels' GET 
   to POST.
 
+OVERVIEW:
+
+  jsonptunnel.cgi itself looks for three GET variables, two of which 
+  are required:
+
+    REQUIRED:
+
+      1. extURL - the URL to GET or POST to.
+      2. extMethod - the HTTP method to use when fetching the URL.
+
+    OPTIONAL:
+
+      1. extCallback - wraps the off-site output with a function
+                       named this parameter, taking the returned
+                       data as its only parameter.
+
+    EXAMPLE:
+      
+      http://yoursite.com/cgi-bin/jsonptunnel.cgi?extURL=http://
+      somewhereelse.com/data/post&extMethod=POST&someThing=yo&
+      somethingElse=rofl
+
+    EXPLANATION:
+
+      jsonptunnel sends any variables you specify in the query
+      string other than the ext* variables to the target URL.
+
 QUICKSTART:
 
   1. make get-cgic
