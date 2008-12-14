@@ -50,7 +50,7 @@ int cgiMain(void) {
   freeReq(&req);
 
   /* Clean exit */
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 
 }
 
