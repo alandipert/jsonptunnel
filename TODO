@@ -1,5 +1,4 @@
-Add "callback" (extCallback) parameter to append a javascript fragment
-to the end of the libcurl output that notifies the parent
-app of a completed request.
-
-A caching mechanism
+Caching mechanism.
+Implement as a FastCGI.
+In curl.c, get curl_easy_escape to work (it's broken for some reason).
+Improve documentation, provide Javascript example using popular libraries.

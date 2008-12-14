@@ -1,27 +1,29 @@
+ABOUT:
+
+  This is a C cgi that "mirrors" web services available via HTTP POST
+  or GET.  The reason you might want to do this is to access off-site
+  JSON data sources from scripts via JSONP.
+
+  Because the trick behind JSONP is dynamically adding "<script>" nodes
+  to the DOM with the DOM API, it's intrinsically limited to external
+  scripts available with an HTTP "GET."
+
+  This CGI lets you send HTTP POST data to off-site URLs, and
+  retrieve the result, with an HTTP GET - it 'tunnels' GET 
+  to POST.
+
 QUICKSTART:
 
   1. make get-cgic
   2. make
   3. copy the created jsonptunnel.cgi to your cgi-bin (or equivalent).
 
-REQUIREMENTS:
+DEPENDENCIES:
 
   1. libcurl
   2. libcgic - download automatically with 'make get-cgic' command.
 
   jsonptunnel requires libcurl and libcgic.  libcurl is pretty common,
-  libcgic is not.  the 'make get-cgic' command downloads cgic into the
+  libcgic is not.  The 'make get-cgic' command downloads cgic into the
   current directory and a subsequent make command will build the library
   and link against it.
-
-ABOUT:
-
-  This is a C CGI program that takes two required parameters
-  as an HTTP "GET":
-
-  jsonptunnel.cgi?extURL=http://somewhere.com/app/post&extMethod=POST&arg1=
-  lol&arg2=rofl...
-
-  The program then POSTS all passed variables other than extURL, extMethod, and extCallback
-  to the specified URL.  Returned data is printed,
-  and the callback method is appended to the output.
