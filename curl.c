@@ -7,7 +7,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "cgic.h"
+#include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
 /*

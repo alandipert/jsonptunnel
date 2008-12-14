@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "cgic.h"
+#include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
 /*
