@@ -40,7 +40,7 @@ int cgiMain(void) {
    * Requests the URL with curl and appends the extCallback
    * function to the end of the output.
    */
-  if(!postReq(&req)) {
+  if(!doFetch(&req)) {
     freeReq(&req);
     exitStatus(500, "There was an error fetching the remote data.");
     return EXIT_FAILURE;
@@ -83,7 +83,7 @@ void printParams(struct extRequest *req) {
 
   fprintf(cgiOut, "CURL output:\n");
 
-  postReq(req);
+  doFetch(req);
 
 }
 
