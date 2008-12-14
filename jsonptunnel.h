@@ -46,7 +46,7 @@ struct extRequest {
 } extRequest;
 
 /*
- * jsonptunnel.c
+ * main.c
  */
 int cgiMain(void);
 int countArguments(void);

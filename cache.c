@@ -64,7 +64,8 @@ char * get_cached_filename(struct extRequest *req) {
 
 }
 
-/* Crude implementation of 32-bit FNV-1 hash algorithm,
+/* 
+ * Crude implementation of 32-bit FNV-1 hash algorithm,
  * see http://www.isthe.com/chongo/tech/comp/fnv/ for details
  * about the magic numbers.
  *

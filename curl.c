@@ -30,7 +30,7 @@ int doFetch(struct extRequest *req) {
   } else {
 
     /* Caching placeholder code */
-    exitStatus(500, "Caching not implemented yet.");
+    exitStatus(500, "Caching not implemented yet.  Try your request again without setting extCache.");
     return 1;
 
     /*
