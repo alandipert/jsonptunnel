@@ -26,11 +26,25 @@ int cgiMain(void) {
 
   /* Attempt to load the request with the right information */
   if(!initReq(&req)) {
+    freeReq(&req);
     return EXIT_FAILURE;
   }
 
-  /* Print the passed variables and arguments. */
-  printParams(&req);
+  /* 
+   * Print the passed variables and arguments. 
+   * For debugging purposes - maybe this should be an extParam?
+   */
+  //printParams(&req);
+
+  /* 
+   * Requests the URL with curl and appends the extCallback
+   * function to the end of the output.
+   */
+  if(!postReq(&req)) {
+    freeReq(&req);
+    exitStatus(500, "There was an error fetching the remote data.");
+    return EXIT_FAILURE;
+  }
 
   /* Free all the strings malloced inside of req */
   freeReq(&req);
@@ -76,8 +90,8 @@ void printParams(struct extRequest *req) {
 /*
  * Send a '400' 'Bad Request' HTTP error code and exit.
  */
-void exit400(char *msg) {
-  cgiHeaderStatus(400, msg);
+void exitStatus(int status, char *msg) {
+  cgiHeaderStatus(status, msg);
   fprintf(cgiOut, "There was an error processing your request: %s\n", msg);
 }
 
@@ -87,22 +101,21 @@ void exit400(char *msg) {
  */
 int parseMethod(struct extRequest *req) {
 
+  int return_status = 0;
   int methodLength = 5;
   char method[methodLength];
 
   if(cgiFormString(METHOD_PARAM_NAME, method, methodLength) == cgiFormSuccess) {
     if(strcmp(&method[0], "GET") == 0) {
       req->method = METHOD_GET; 
+      return_status = 1;
     } else if(strcmp(&method[0], "POST") == 0) {
+      return_status = 1;
       req->method = METHOD_POST;
-    } else {
-      return 0;
-    }
-  } else {
-    return 0;
+    } 
   }
 
-  return 1;
+  return return_status;
 }
 
 /*
@@ -148,6 +161,37 @@ struct extArg * makeArg(char *name, char *value) {
   strcpy(arg->argVal, value);
 
   return arg;
+}
+
+/*
+ * Parse out the callback method and
+ * add it to the req struct.
+ */
+int parseCallback(struct extRequest *req) {
+  int return_status = 0;
+  int callbackLength = 0;
+  if(cgiFormStringSpaceNeeded(CALLBACK_PARAM_NAME, &callbackLength) == cgiFormSuccess) {
+    if(callbackLength > 0) {
+      req->callback = (char*)malloc(sizeof(char)*callbackLength);
+      if(cgiFormString(CALLBACK_PARAM_NAME, req->callback, callbackLength) == cgiFormSuccess) {
+        return_status = 1;
+      } else {
+        free(req->callback);
+      }
+    } 
+  }
+
+  /*
+   * Set req->callback to NULL
+   * so that it's not printed
+   * in curl.c
+   */
+  if(!return_status) {
+    req->callback = NULL;
+  }
+
+  return return_status;
+  
 }
 
 /*
@@ -200,25 +244,23 @@ int parseArguments(struct extRequest *req) {
  * Determine the URL to send data to.
  */
 int parseURL(struct extRequest *req) {
-  //parse URL
+
+  int return_status = 0;
   int urlLength = 0;
+
   if(cgiFormStringSpaceNeeded(URL_PARAM_NAME, &urlLength) == cgiFormSuccess) {
     if(urlLength > 0) {
       req->url = (char*)malloc(sizeof(char)*urlLength);
       if(cgiFormString(URL_PARAM_NAME, req->url, urlLength) == cgiFormSuccess) {
-        return 1;
+        /* Success */
+        return_status = 1;
       } else {
         free(req->url);
-        return 0;
       }
-    } else {
-      return 0;
-    }
-  } else {
-    return 0;
+    } 
   }
 
-  return 1;
+  return return_status;
 }
 
 /*
@@ -246,19 +288,26 @@ void freeReq(struct extRequest *req) {
 int initReq(struct extRequest *req) {
 
   if(!parseURL(req)) {
-    exit400("Error parsing URL.\n");
+    exitStatus(400, "Error parsing URL.\n");
     return 0;
   } 
 
   if(!parseMethod(req)) {
-    exit400("Error parsing HTTP method.\n");
+    exitStatus(400, "Error parsing HTTP method.\n");
     return 0;
   }
 
   if(!parseArguments(req)) {
-    exit400("Error parsing passed arguments or values.\n");
+    exitStatus(400, "Error parsing passed arguments or values.\n");
     return 0;
   }
+
+  /*
+   * The callback function is not required,
+   * because some JSON-producing webservices
+   * provide their own parameter for this.
+   */
+  parseCallback(req);
 
   return 1;
 

@@ -17,7 +17,7 @@
  * the HTTP action specified in req->
  * extMethod.
  */
-void postReq(struct extRequest *req) {
+int postReq(struct extRequest *req) {
 
   CURL *curl;
   CURLcode res;
@@ -46,10 +46,21 @@ void postReq(struct extRequest *req) {
     /* what URL that receives this POST */
     curl_easy_setopt(curl, CURLOPT_URL, req->url);
 
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+    switch(req->method) {
+      case METHOD_POST:
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        break;
+      case METHOD_GET:
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, formpost);
+        break;
+      default:
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+    }
 
     /* send everything to this function */
     //curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+    //curl_easy_setopt(curl, CURLOPT_WRITEHEADER, cgiOut);
+    cgiHeaderContentType("text/json");
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, cgiOut);
 
     res = curl_easy_perform(curl);
@@ -62,5 +73,18 @@ void postReq(struct extRequest *req) {
 
     /* free slist */
     curl_slist_free_all (headerlist);
+
+    if(req->callback != NULL) {
+      /* Append the callback string to output */
+      fprintf(cgiOut, "\n%s;\n", req->callback);
+    }
+
+    /* Things went well, return 1 for good times. */
+    return 1;
+
+  } else {
+
+    /* Ruh-roh, it's broken. */
+    return 0;
   }
 }
