@@ -25,7 +25,7 @@ char * buildQueryString(CURL * curl, struct extRequest *req) {
   int urllen = strlen(req->url);
   int size = bufsize+urllen+1;
   char *q = (char*)malloc(sizeof(char)*(size));
-  char *escaped_url;
+  //char *escaped_url;
   strcpy(q, req->url);
 
   strcat(q, "?");
@@ -38,7 +38,10 @@ char * buildQueryString(CURL * curl, struct extRequest *req) {
     val_len = strlen(req->args[i]->argVal);
 
     while(spaceleft < name_len + val_len + 4) {
-      realloc(q, size+bufsize);
+      if(realloc(q, size+bufsize) != q) {
+        free(q);
+        return NULL;
+      }
       size += bufsize;
       spaceleft = bufsize;
     }
@@ -84,7 +87,10 @@ int doGetReq(struct extRequest *req) {
   if(curl) {
 
     cgiHeaderContentType("text/json");
-    escaped_url = buildQueryString(curl, req);
+    if((escaped_url = buildQueryString(curl, req)) == NULL) {
+      curl_easy_cleanup(curl);
+      return 0;
+    }
     curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
 
     //fprintf(cgiOut, escaped_url);
