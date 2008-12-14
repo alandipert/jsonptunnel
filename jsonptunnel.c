@@ -81,9 +81,10 @@ void printParams(struct extRequest *req) {
     fprintf(cgiOut, "%i. \"%s\" = \"%s\"\n", i+1, req->args[i]->argName,req->args[i]->argVal);
   }
 
-  fprintf(cgiOut, "CURL output:\n");
-
-  doFetch(req);
+  fprintf(cgiOut, "Hash: %lu\n", req->hash);
+  //fprintf(cgiOut, "CURL output:\n");
+//
+  //doFetch(req);
 
 }
 
@@ -161,6 +162,29 @@ struct extArg * makeArg(char *name, char *value) {
   strcpy(arg->argVal, value);
 
   return arg;
+}
+
+/*
+ * Check for an "extCache" parameter
+ * and don't worry about its value.  If it's set,
+ * we'll figured out the FNV hash of the query string
+ * and store it in req.  Then later before curl gets called
+ * we'll check for a cached object to return.
+ *
+ * If it's not set, we set req->hash to 0 and don't
+ * cache anything.
+ */
+int parseCache(struct extRequest *req) {
+  int return_status = 0;
+  int cacheLength = 0;
+  if(cgiFormStringSpaceNeeded(CACHE_PARAM_NAME, &cacheLength) == cgiFormSuccess) {
+    req->hash = hash_str(cgiQueryString);
+    return_status = 1;
+  } else {
+    req->hash = 0;
+  }
+
+  return return_status;
 }
 
 /*
@@ -308,6 +332,8 @@ int initReq(struct extRequest *req) {
    * provide their own parameter for this.
    */
   parseCallback(req);
+
+  parseCache(req);
 
   return 1;
 

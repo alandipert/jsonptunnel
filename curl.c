@@ -15,6 +15,24 @@
 #include "jsonptunnel.h"
 
 /*
+ * The fetch "route" function - sends
+ * the request to the right METHOD and
+ * checks for req->hash for cached object
+ * handling.
+ */
+int doFetch(struct extRequest *req) {
+  //if(req->hash == 0) {
+    if(req->method == METHOD_POST) {
+      return doPostReq(req);
+    } else {
+      return doGetReq(req);
+    }
+  //} else {
+    //Check for cached objects.
+  //}
+}
+
+/*
  * Used to build URL-encoded query strings.
  * curl_easy_escape is broken for some reason.
  */
@@ -62,14 +80,6 @@ char * buildQueryString(CURL * curl, struct extRequest *req) {
   //return escaped_url;
 
   return q;
-}
-
-int doFetch(struct extRequest *req) {
-  if(req->method == METHOD_POST) {
-    return doPostReq(req);
-  } else {
-    return doGetReq(req);
-  }
 }
 
 /*
