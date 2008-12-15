@@ -38,11 +38,17 @@ int doFetch(struct extRequest *req) {
      *
      * 1. Check for a file named req->hash.
      * 2. If it exists, pipe it to cgiOut and return success.
-     * 3. If it doesn't exist, create a new file named req->hash.
-     *    Open a file descriptor for the new file, and pass this as
+     * 3. 
+     *    3a. If it doesn't exist, check the lock file to see if 
+     *    a cached object is in the process of being created.
+     *    3b. If it is, sleep for a period of time and check again.
+     *    3c. If it is not, create a new file named req->hash.  
+     *    Write the hash to the lock.
+     *    3d. Open a file descriptor for the new file, and pass this as
      *    the second parameter of the appropriate do*Req function.
-     *    3a. Open the new file and pass its contents to cgiOut.
-     *    3b. Return success.
+     *    3e. Write the hash to a lock file.
+     *    3f. Open the new file and pass its contents to cgiOut.
+     *    3g. Return success.
      */
   }
 }

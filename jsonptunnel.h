@@ -55,6 +55,7 @@ int parseArguments(struct extRequest *req);
 int parseCache(struct extRequest *req); 
 int parseMethod(struct extRequest *req);
 int parseURL(struct extRequest *req);
+int parseCallback(struct extRequest *req);
 void exitStatus(int status, char *msg);
 void freeReq(struct extRequest *req); 
 void printParams(struct extRequest *req);
