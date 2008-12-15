@@ -1,5 +1,5 @@
 /*
- * jsonptunnel.c
+ * main.c
  *
  * Use libcgic to parse a GET request
  * and construct an extRequest struct.
@@ -51,6 +51,48 @@ int cgiMain(void) {
 
   /* Clean exit */
   return EXIT_SUCCESS;
+
+}
+
+/*
+ * Try to populate a req struct with
+ * all the various arguments and
+ * parameters.
+ */
+int initReq(struct extRequest *req) {
+
+  if(!parseURL(req)) {
+    exitStatus(400, "Error parsing URL.\n");
+    return 0;
+  } 
+
+  if(!parseMethod(req)) {
+    exitStatus(400, "Error parsing HTTP method.\n");
+    return 0;
+  }
+
+  if(!parseArguments(req)) {
+    exitStatus(400, "Error parsing passed arguments or values.\n");
+    return 0;
+  }
+
+  /*
+   * The callback function is not required,
+   * because some JSON-producing webservices
+   * provide their own parameter for this.
+   */
+  parseCallback(req);
+
+  /*
+   * If extCache is set to anything, create
+   * a hash using hash_str in cache.c and 
+   * set req->hash to this number.
+   *
+   * extCache is optional.
+   */
+  parseCache(req);
+
+  return 1;
 
 }
 
@@ -302,47 +344,5 @@ void freeReq(struct extRequest *req) {
   //free URL and method 
   free(req->url);
   free(req->args);
-}
-
-/*
- * Try to populate a req struct with
- * all the various arguments and
- * parameters.
- */
-int initReq(struct extRequest *req) {
-
-  if(!parseURL(req)) {
-    exitStatus(400, "Error parsing URL.\n");
-    return 0;
-  } 
-
-  if(!parseMethod(req)) {
-    exitStatus(400, "Error parsing HTTP method.\n");
-    return 0;
-  }
-
-  if(!parseArguments(req)) {
-    exitStatus(400, "Error parsing passed arguments or values.\n");
-    return 0;
-  }
-
-  /*
-   * The callback function is not required,
-   * because some JSON-producing webservices
-   * provide their own parameter for this.
-   */
-  parseCallback(req);
-
-  /*
-   * If extCache is set to anything, create
-   * a hash using hash_str in cache.c and 
-   * set req->hash to this number.
-   *
-   * extCache is optional.
-   */
-  parseCache(req);
-
-  return 1;
-
 }
 
