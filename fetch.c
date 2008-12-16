@@ -76,15 +76,16 @@ int doFetch(struct extRequest *req) {
       }
 
       if(req->method == METHOD_POST) {
-        return doPostReq(req, cache_file);
+        doPostReq(req, cache_file);
       } else {
-        return doGetReq(req, cache_file);
+        doGetReq(req, cache_file);
       }
 
+      fflush(cache_file);
       fclose(cache_file);
 
       //read from a file that already exists
-      //returnFile(fullpath);
+      returnFile(fullpath);
       //fprintf(cgiOut, "path: %s", fullpath);
 
       free(fullpath);
@@ -286,8 +287,6 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
     if(req->callback != NULL) {
       fprintf(outputStream, ");");
     }
-
-    fflush(outputStream);
 
     /* Things went well, return 1 for good times. */
     return 1;
