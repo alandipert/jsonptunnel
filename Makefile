@@ -1,6 +1,7 @@
 CC=gcc
 LIBS=cgic/libcgic.a -lcurl -lfcgi
-INCLUDE=-Icgic -I/opt/include 
+FCGI_HEADERS=-I/opt/include
+INCLUDE=-Icgic $(FCGI_HEADERS) 
 CFLAGS+=-g -Wall
 CFLAGS+=$(INCLUDE)
 #CFLAGS+=-O2
@@ -12,13 +13,13 @@ INSTALLDIR = /Users/alan/Sites/cgi-bin
 QUIET_SUBDIR0  = +$(MAKE) -C # space to separate -C and subdir
 QUIET_SUBDIR1  =
 
-all: jsonptunnel.cgi 
+all: jsonptunnel.fcgi 
 
-jsonptunnel.cgi: $(OBJECTS) libcgic
-	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.cgi  $(OBJECTS) $(LIBS)
+jsonptunnel.fcgi: $(OBJECTS) libcgic
+	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.fcgi  $(OBJECTS) $(LIBS)
 
-install: jsonptunnel.cgi
-	cp jsonptunnel.cgi $(INSTALLDIR) 
+install: jsonptunnel.fcgi
+	cp jsonptunnel.fcgi $(INSTALLDIR) 
 
 libcgic:
 	$(QUIET_SUBDIR0)cgic $(QUIET_SUBDIR1) libcgic.a
@@ -27,4 +28,4 @@ get-cgic:
 	curl $(CGIC_URL) | tar -xz && rm -rf git && mv cgic$(CGIC_VER) cgic 
 
 clean:
-	rm -f *.o *.a jsonptunnel.cgi
+	rm -f *.o *.a jsonptunnel.fcgi
