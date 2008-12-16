@@ -1,5 +1,5 @@
 /*
- * curl.c
+ * fetch.c
  *
  * Use curl/easy API to make
  * HTTP GET/POST requests.
@@ -11,8 +11,38 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <sys/param.h>
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
+
+int returnFile(char *filename) {
+
+  /* The file to pipe out */
+  FILE *cache_file;
+
+  /* A nice big buffer size */
+  int buf_size = 512;
+  int buf[buf_size];
+  int *bufptr = &buf[0];
+  int obj_size = sizeof(int);
+
+  /* The number of objects read */
+  int read;
+
+  if ((cache_file = fopen(filename, "r")) == NULL) {
+    return 0;
+  }
+
+  while(!feof(cache_file)) {
+    read = fread(bufptr, obj_size, buf_size, cache_file);
+    fwrite(bufptr, obj_size, read, cgiOut);
+  }
+
+  fclose(cache_file);
+
+  return 1;
+
+}
 
 /*
  * The fetch "route" function - sends
@@ -21,6 +51,7 @@
  * handling.
  */
 int doFetch(struct extRequest *req) {
+  cgiHeaderContentType("text/json");
   if(req->hash == 0) {
     if(req->method == METHOD_POST) {
       return doPostReq(req, cgiOut);
@@ -28,10 +59,50 @@ int doFetch(struct extRequest *req) {
       return doGetReq(req, cgiOut);
     }
   } else {
+    char *cached_file_name = get_cached_filename(req);
+    if(cached_file_name == NULL) {
+
+      /* The name of the cached object we're creating */
+      char cache_name[MAXPATHLEN];
+      sprintf(cache_name, "%lu", req->hash);
+      char *fullpath = (char*)malloc(sizeof(char)*(strlen(CACHE_DIR)+strlen(&cache_name[0])+1));
+      strcpy(fullpath, CACHE_DIR);
+      strcat(fullpath, &cache_name[0]);
+      FILE *cache_file;
+
+      if ((cache_file = fopen(fullpath, "a")) == NULL) {
+        free(fullpath);
+        return 0;
+      }
+
+      if(req->method == METHOD_POST) {
+        return doPostReq(req, cache_file);
+      } else {
+        return doGetReq(req, cache_file);
+      }
+
+      fclose(cache_file);
+
+      //read from a file that already exists
+      //returnFile(fullpath);
+      //fprintf(cgiOut, "path: %s", fullpath);
+
+      free(fullpath);
+
+      return 1;
+
+    } else {
+      //fprintf(cgiOut, "A cached object was found.\n");
+      //read from a file that already exists
+      returnFile(cached_file_name);
+      return 1;
+    }
+
+
 
     /* Caching placeholder code */
-    exitStatus(500, "Caching not implemented yet.  Try your request again without setting extCache.");
-    return 1;
+    //exitStatus(500, "Caching not implemented yet.  Try your request again without setting extCache.");
+    //return 1;
 
     /*
      * TODO:
@@ -117,7 +188,7 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
 
   if(curl) {
 
-    cgiHeaderContentType("text/json");
+    //cgiHeaderContentType("text/json");
     if((escaped_url = buildQueryString(curl, req)) == NULL) {
       curl_easy_cleanup(curl);
       return 0;
@@ -166,8 +237,8 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
 
   struct curl_httppost *formpost=NULL;
   struct curl_httppost *lastptr=NULL;
-  struct curl_slist *headerlist=NULL;
-  static const char buf[] = "Expect:";
+  //struct curl_slist *headerlist=NULL;
+  //static const char buf[] = "Expect:";
 
   curl_global_init(CURL_GLOBAL_ALL);
 
@@ -181,7 +252,7 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
   }
 
   curl = curl_easy_init();
-  headerlist = curl_slist_append(headerlist, buf);
+  //headerlist = curl_slist_append(headerlist, buf);
 
   if(curl) {
 
@@ -193,7 +264,7 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
     /* send everything to this function */
     //curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
     //curl_easy_setopt(curl, CURLOPT_WRITEHEADER, cgiOut);
-    cgiHeaderContentType("text/json");
+    //cgiHeaderContentType("text/json");
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
 
     if(req->callback != NULL) {
@@ -210,11 +281,13 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
     curl_formfree(formpost);
 
     /* free slist */
-    curl_slist_free_all (headerlist);
+    //curl_slist_free_all (headerlist);
 
     if(req->callback != NULL) {
       fprintf(outputStream, ");");
     }
+
+    fflush(outputStream);
 
     /* Things went well, return 1 for good times. */
     return 1;

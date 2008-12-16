@@ -58,9 +58,28 @@ char * get_cached_filename(struct extRequest *req) {
     free(namelist[i]);
   }
 
-  free(namelist);
+  if(num_entries > 0) {
+    free(namelist);
+  }
 
-  return filename;
+  char *fullpath = NULL;
+
+  if(filename != NULL) {
+
+    /* Make a string for the cache dir; filename gets appended. */
+    char *cachedir = (char*)malloc(sizeof(char)*(strlen(CACHE_DIR)+1));
+    cachedir = strcpy(cachedir, CACHE_DIR);
+
+    /* Append filename to the cachedir path */
+    fullpath = (char*)malloc(sizeof(char)*(strlen(filename)+strlen(cachedir)+1));
+    strcpy(fullpath, cachedir);
+    strcat(fullpath, filename);
+
+    free(cachedir);
+    free(filename);
+  }
+
+  return fullpath;
 
 }
 
@@ -76,8 +95,8 @@ char * get_cached_filename(struct extRequest *req) {
 #define FNV_OFFSET 0x811c9dc5
 #define FNV_PRIME  0x01000193
 
-unsigned long hash_str(const char *str)
-{
+unsigned long hash_str(const char *str) {
+
 	unsigned long h = FNV_OFFSET;
 	unsigned char *s = (unsigned char *)str;
 

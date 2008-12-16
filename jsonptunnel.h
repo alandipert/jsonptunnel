@@ -5,7 +5,7 @@
 /*
  * The directory to store cached objects.
  */
-#define CACHE_DIR "cache"
+#define CACHE_DIR "/tmp/cache/"
 
 /*
  * Supported HTTP methods.
@@ -49,24 +49,37 @@ struct extRequest {
  * main.c
  */
 int cgiMain(void);
-int countArguments(void);
-int initReq(struct extRequest *req); 
-int parseArguments(struct extRequest *req);
-int parseCache(struct extRequest *req); 
-int parseMethod(struct extRequest *req);
-int parseURL(struct extRequest *req);
-int parseCallback(struct extRequest *req);
-void exitStatus(int status, char *msg);
-void freeReq(struct extRequest *req); 
+
+/*
+ * debug.c
+ */
 void printParams(struct extRequest *req);
 
 /*
- * curl.c
+ * error.c
  */
-char * buildQueryString(CURL *curl, struct extRequest *req);
+void exitStatus(int status, char *msg);
+
+/*
+ * request.c
+ */
+int countArguments(void);
+int initReq(struct extRequest *req);
+int parseArguments(struct extRequest *req);
+int parseCache(struct extRequest *req);
+int parseCallback(struct extRequest *req);
+int parseMethod(struct extRequest *req);
+int parseURL(struct extRequest *req);
+struct extArg * makeArg(char *name, char *value);
+void freeReq(struct extRequest *req);
+
+/*
+ * fetch.c
+ */
+char * buildQueryString(CURL * curl, struct extRequest *req);
 int doFetch(struct extRequest *req);
-int doGetReq(struct extRequest *req, FILE *outputStream); 
-int doPostReq(struct extRequest *req, FILE *outputStream); 
+int doGetReq(struct extRequest *req, FILE *outputStream);
+int doPostReq(struct extRequest *req, FILE *outputStream);
 
 /*
  * cache.c
