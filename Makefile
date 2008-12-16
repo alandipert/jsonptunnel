@@ -1,6 +1,7 @@
 CC=gcc
-LIBS=cgic/libcgic.a -lcurl
-INCLUDE=-Icgic
+LIBS=cgic/libcgic.a -lcurl -lfcgi
+FCGI_INCLUDE=-I/opt/include
+INCLUDE=-Icgic $(FCGI_INCLUDE)
 CFLAGS+=-g -Wall
 #CFLAGS+=-O2
 OBJECTS+=main.o fetch.o cache.o error.o request.o debug.o
