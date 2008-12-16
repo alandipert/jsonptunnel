@@ -5,7 +5,7 @@
 /*
  * The directory to store cached objects.
  */
-#define CACHE_DIR "/tmp/cache/"
+#define CACHE_DIR "/tmp/jsonpcache/"
 
 /*
  * Supported HTTP methods.

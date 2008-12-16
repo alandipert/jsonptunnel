@@ -35,7 +35,7 @@ int returnFile(char *filename) {
 
   while(!feof(cache_file)) {
     read = fread(bufptr, obj_size, buf_size, cache_file);
-    fwrite(bufptr, obj_size, read, cgiOut);
+    fwrite(bufptr, obj_size, read+1, cgiOut);
   }
 
   fclose(cache_file);
