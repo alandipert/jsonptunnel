@@ -1,8 +1,8 @@
 CC=gcc
 LIBS=cgic/libcgic.a -lcurl -lfcgi
-FCGI_INCLUDE=-I/opt/include
-INCLUDE=-Icgic $(FCGI_INCLUDE)
+INCLUDE=-Icgic -I/opt/include 
 CFLAGS+=-g -Wall
+CFLAGS+=$(INCLUDE)
 #CFLAGS+=-O2
 OBJECTS+=main.o fetch.o cache.o error.o request.o debug.o
 CGIC_VER = 205
@@ -15,7 +15,7 @@ QUIET_SUBDIR1  =
 all: jsonptunnel.cgi 
 
 jsonptunnel.cgi: $(OBJECTS) libcgic
-	$(CC) $(CFLAGS) -o jsonptunnel.cgi $(OBJECTS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.cgi  $(OBJECTS) $(LIBS)
 
 install: jsonptunnel.cgi
 	cp jsonptunnel.cgi $(INSTALLDIR) 
