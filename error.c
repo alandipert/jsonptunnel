@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <fcgi_stdio.h>
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
