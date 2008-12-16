@@ -26,7 +26,10 @@ OVERVIEW:
 
       1. extCallback - wraps the off-site output with a function
                        named this parameter, taking the returned
-                       data as its only parameter.
+                       data as its only parameter.  Many JSONP
+                       web services provide their own 'callback'
+                       parameter; if they don't, you can use this.
+
 
       NOT IMPLEMENTED:
 
@@ -44,6 +47,14 @@ OVERVIEW:
 
       jsonptunnel sends any variables you specify in the query
       string other than the ext* variables to the target URL.
+
+    LIVE EXAMPLE:
+
+      http://ubergibson.com/~alan/calc/
+
+      This is a page using Mootools with the JsonP extension from clientcide.
+      It's an example of how to tunnel a POST request across domains to a
+      simple web service that adds two numbers, and display the result.
 
 QUICKSTART:
 
