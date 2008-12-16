@@ -23,7 +23,7 @@ int returnFile(char *filename) {
   /* A nice big buffer size */
   int buf_size = 512;
   char buf[buf_size];
-  int *bufptr = &buf[0];
+  char *bufptr = &buf[0];
   int obj_size = sizeof(char);
 
   /* The number of objects read */
