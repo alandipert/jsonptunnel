@@ -22,9 +22,9 @@ int returnFile(char *filename) {
 
   /* A nice big buffer size */
   int buf_size = 512;
-  int buf[buf_size];
+  char buf[buf_size];
   int *bufptr = &buf[0];
-  int obj_size = sizeof(int);
+  int obj_size = sizeof(char);
 
   /* The number of objects read */
   int read;
@@ -35,7 +35,7 @@ int returnFile(char *filename) {
 
   while(!feof(cache_file)) {
     read = fread(bufptr, obj_size, buf_size, cache_file);
-    fwrite(bufptr, obj_size, read+1, cgiOut);
+    fwrite(bufptr, obj_size, read, cgiOut);
   }
 
   fclose(cache_file);
