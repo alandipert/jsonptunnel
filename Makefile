@@ -1,6 +1,6 @@
 CC=gcc
-LIBS=cgic/libcgic.a -lcurl -lfcgi
-FCGI_HEADERS=-I/opt/include
+LIBS=-L/usr/local/lib cgic/libcgic.a -lcurl -lfcgi
+FCGI_HEADERS=-I/usr/local/include
 INCLUDE=-Icgic $(FCGI_HEADERS) 
 CFLAGS+=-g -Wall
 CFLAGS+=$(INCLUDE)

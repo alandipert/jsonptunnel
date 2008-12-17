@@ -3,6 +3,16 @@
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
+void debuglog(char *msg) {
+  FILE *logfile = fopen("log", "a");
+  fprintf(logfile, msg);
+  fclose(logfile);
+}
+
+FILE * logptr() {
+  return fopen("log", "a");
+}
+
 /*
  * Print the contentns of an extRequest
  * and call postReq, also printing the

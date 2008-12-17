@@ -16,6 +16,12 @@
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
+FILE *finalOutput;
+
+size_t write_function( void *ptr, size_t size, size_t nmemb, void *stream) {
+  return fwrite(ptr, size, nmemb, finalOutput); 
+}
+
 int returnFile(char *filename) {
 
   /* The file to pipe out */
@@ -95,6 +101,7 @@ int doFetch(struct extRequest *req) {
 
     } else {
       //fprintf(cgiOut, "A cached object was found.\n");
+      debuglog("returning a cached item\n");
       //read from a file that already exists
       returnFile(cached_file_name);
       return 1;
@@ -185,6 +192,7 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
   CURL *curl;
   CURLcode res;
   char *escaped_url;
+  finalOutput = outputStream;
 
   curl = curl_easy_init(); 
 
@@ -198,14 +206,28 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
     curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
 
     //fprintf(cgiOut, escaped_url);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
       fprintf(outputStream, "%s(", req->callback);
     }
 
+
+    /*
+     * CURLOPT_WRITEDATA is broken because 
+     * curl isn't linked against fcgi_stdio,
+     * and we can't pass it an fcgi_FILE *.
+     * FCGI_ToFile doesn't work because we want
+     * it to pipe data to an output stream, not
+     * an actual file.
+     */
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, FCGI_ToFILE(outputStream));
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function); 
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)NULL);
+
     res = curl_easy_perform(curl);
+
 
     /* always cleanup */
     curl_easy_cleanup(curl);
@@ -226,6 +248,7 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
     /* Ruh-roh, it's broken. */
     return 0;
   }
+
 }
 
 /*
@@ -236,6 +259,7 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
 
   CURL *curl;
   CURLcode res;
+  finalOutput = outputStream;
 
   struct curl_httppost *formpost=NULL;
   struct curl_httppost *lastptr=NULL;
@@ -267,7 +291,8 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
     //curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
     //curl_easy_setopt(curl, CURLOPT_WRITEHEADER, cgiOut);
     //cgiHeaderContentType("text/json");
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function); 
 
     if(req->callback != NULL) {
       /* Append the callback string to output */

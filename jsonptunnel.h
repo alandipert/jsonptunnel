@@ -1,3 +1,4 @@
+#include <fcgi_stdio.h>
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
@@ -12,6 +13,12 @@
  */
 #define METHOD_GET 0
 #define METHOD_POST 1
+
+/*
+ * Used for writing output - to file or to output stream.
+ */
+#define OUTPUT_CACHEFILE 0
+#define OUTPUT_CLIENT 1
 
 /*
  * Required parameters.
@@ -53,6 +60,8 @@ int cgiMain(void);
 /*
  * debug.c
  */
+void debuglog(char *msg);
+FILE *logptr();
 void printParams(struct extRequest *req);
 
 /*
@@ -76,6 +85,7 @@ void freeReq(struct extRequest *req);
 /*
  * fetch.c
  */
+size_t write_function( void *ptr, size_t size, size_t nmemb, void *stream);
 char * buildQueryString(CURL * curl, struct extRequest *req);
 int doFetch(struct extRequest *req);
 int doGetReq(struct extRequest *req, FILE *outputStream);
