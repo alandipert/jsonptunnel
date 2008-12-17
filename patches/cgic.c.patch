@@ -1,0 +1,63 @@
+--- cgic.c	2004-11-15 11:57:59.000000000 -0500
++++ ../jsonptunnel/cgic/cgic.c	2008-12-16 20:42:33.000000000 -0500
+@@ -22,7 +22,8 @@
+ #define CGICDEBUGEND
+ #endif /* CGICDEBUG */
+ 
+-#include <stdio.h>
++//#include <stdio.h>
++#include <fcgi_stdio.h>
+ #include <string.h>
+ #include <ctype.h>
+ #include <stdlib.h>
+@@ -120,7 +121,8 @@ static int cgiStrEqNc(char *s1, char *s2
+ static int cgiStrBeginsNc(char *s1, char *s2);
+ 
+ int main(int argc, char *argv[]) {
+-	int result;
++  while(FCGI_Accept() >= 0) {
++	//int result;
+ 	char *cgiContentLengthString;
+ 	char *e;
+ 	cgiSetupConstants();
+@@ -236,7 +238,7 @@ int main(int argc, char *argv[]) {
+ 				CGICDEBUGEND	
+ #endif /* CGICDEBUG */
+ 				cgiFreeResources();
+-				return -1;
++				//return -1;
+ 			}	
+ #ifdef CGICDEBUG
+ 			CGICDEBUGSTART
+@@ -256,7 +258,7 @@ int main(int argc, char *argv[]) {
+ 				CGICDEBUGEND	
+ #endif /* CGICDEBUG */
+ 				cgiFreeResources();
+-				return -1;
++				//return -1;
+ 			}	
+ #ifdef CGICDEBUG
+ 			CGICDEBUGSTART
+@@ -275,7 +277,7 @@ int main(int argc, char *argv[]) {
+ 			CGICDEBUGEND	
+ #endif /* CGICDEBUG */
+ 			cgiFreeResources();
+-			return -1;
++			//return -1;
+ 		} else {	
+ #ifdef CGICDEBUG
+ 			CGICDEBUGSTART
+@@ -284,9 +286,11 @@ int main(int argc, char *argv[]) {
+ #endif /* CGICDEBUG */
+ 		}
+ 	}
+-	result = cgiMain();
++  cgiMain();
+ 	cgiFreeResources();
+-	return result;
++  }
++
++  return 0;
+ }
+ 
+ static void cgiGetenv(char **s, char *var){
