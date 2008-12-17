@@ -16,6 +16,12 @@
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
+FILE *finalOutput;
+
+size_t write_function( void *ptr, size_t size, size_t nmemb, void *stream) {
+  return fwrite(ptr, size, nmemb, finalOutput);
+}
+
 int returnFile(char *filename) {
 
   /* The file to pipe out */
@@ -185,6 +191,7 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
   CURL *curl;
   CURLcode res;
   char *escaped_url;
+  finalOutput = outputStream;
 
   curl = curl_easy_init(); 
 
@@ -198,7 +205,8 @@ int doGetReq(struct extRequest *req, FILE *outputStream) {
     curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
 
     //fprintf(cgiOut, escaped_url);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
@@ -236,6 +244,7 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
 
   CURL *curl;
   CURLcode res;
+  finalOutput = outputStream;
 
   struct curl_httppost *formpost=NULL;
   struct curl_httppost *lastptr=NULL;
@@ -264,10 +273,10 @@ int doPostReq(struct extRequest *req, FILE *outputStream) {
     curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
     /* send everything to this function */
-    //curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
     //curl_easy_setopt(curl, CURLOPT_WRITEHEADER, cgiOut);
     //cgiHeaderContentType("text/json");
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, outputStream);
 
     if(req->callback != NULL) {
       /* Append the callback string to output */
