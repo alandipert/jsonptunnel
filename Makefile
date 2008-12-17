@@ -26,6 +26,8 @@ libcgic:
 
 get-cgic:
 	curl $(CGIC_URL) | tar -xz && rm -rf git && mv cgic$(CGIC_VER) cgic 
+	patch cgic/cgic.c patches/cgic.c.patch
+	patch cgic/cgic.h patches/cgic.h.patch
 
 clean:
 	rm -f *.o *.a jsonptunnel.fcgi
