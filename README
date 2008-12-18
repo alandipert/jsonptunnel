@@ -30,12 +30,6 @@ OVERVIEW:
                        web services provide their own 'callback'
                        parameter; if they don't, you can use this.
 
-    EXAMPLE:
-      
-      http://yoursite.com/cgi-bin/jsonptunnel.cgi?extURL=http://
-      somewhereelse.com/data/post&someThing=yo&
-      somethingElse=rofl
-
     EXPLANATION:
 
       jsonptunnel sends any variables you specify in the query
@@ -43,7 +37,7 @@ OVERVIEW:
 
     LIVE EXAMPLE:
 
-      http://ubergibson.com/~alan/calc/
+      http://labs.thinkminimo.com/jsonptunnel/
 
       This is a page using Mootools with the JsonP extension from clientcide.
       It's an example of how to tunnel a POST request across domains to a
