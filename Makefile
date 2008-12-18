@@ -19,20 +19,22 @@ all: jsonptunnel.fcgi
 
 cgi: jsonptunnel.cgi
 
+fcgi: CFLAGS+=$(FCGI_INCLUDE)
+fcgi: CFLAGS+=-DUSE_FASTCGI=1
 fcgi: jsonptunnel.fcgi
 
 jsonptunnel.cgi: $(OBJECTS) libcgic
 	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.cgi  $(OBJECTS) $(LIBS)
 
 jsonptunnel.fcgi: $(OBJECTS) libcgic
-	$(CC) $(CFLAGS) -DUSE_FASTCGI=1 $(FCGI_INCLUDE) $(INCLUDE) -o jsonptunnel.fcgi  $(OBJECTS) $(LIBS) $(FCGI_LIBS)
+	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.fcgi  $(OBJECTS) $(LIBS) $(FCGI_LIBS)
 
 libcgic:
-	$(QUIET_SUBDIR0)cgic $(QUIET_SUBDIR1) libcgic.a
+	$(QUIET_SUBDIR0)cgic CFLAGS='$(CFLAGS)' $(QUIET_SUBDIR1) libcgic.a
 
 get-cgic:
 	curl $(CGIC_URL) | tar -xz && rm -rf cgic && mv cgic$(CGIC_VER) cgic 
 	patch cgic/cgic.c patches/fastcgic-cgic.patch 
 
 clean:
-	rm -f *.o *.a jsonptunnel.fcgi jsonptunnel.cgi
+	rm -f *.o *.a jsonptunnel.fcgi jsonptunnel.cgi cgic/libcgic.a cgic/cgic.o
