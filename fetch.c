@@ -1,7 +1,14 @@
+#if USE_FASTCGI 
 #include <fcgi_stdio.h>
+#else
+#include <stdio.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <sys/param.h>
+#include <curl/curl.h>
+#include <curl/types.h>
+#include <curl/easy.h>
 #include "cgic/cgic.h"
 #include "jsonptunnel.h"
 
@@ -10,6 +17,8 @@ size_t write_function( void *ptr, size_t size, size_t nmemb, void *stream) {
 }
 
 int doPostReq(struct extRequest *req) {
+
+  cgiHeaderContentType("text/json");
 
   CURL *curl;
   CURLcode res;
