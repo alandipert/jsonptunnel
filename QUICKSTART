@@ -1,5 +1,23 @@
 QUICKSTART:
 
+  CGI:
+
   1. make get-cgic
-  2. make
-  3. copy the created jsonptunnel.cgi to your cgi-bin (or equivalent).
+  2. make cgi
+  3. copy jsonptunnel.cgi to your cgi-bin (or equivalent).
+
+  FastCGI:
+
+  1. make get-cgic
+  2. make fcgi
+  3. Configure your web server to run jsonptunnel.fcgi. See "LIGHTTPD.CONF.EXAMPLE"
+     for an example configuration.
+
+  CAVEATS:
+
+  You may have to modify the variable FCGI_INCLUDE at the top of the
+  Makefile to point to the location of the FastCGI header files
+  on your system.
+
+  To switch between fcgi and cgi builds, 'make clean'
+  before running 'make cgi' or 'make fcgi.'

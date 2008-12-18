@@ -1,0 +1,15 @@
+# here's an example configuration for lighttpd with mod_fastcgi.
+# for mod_fastcgi docs, see: http://redmine.lighttpd.net/wiki/lighttpd/Docs:ModFastCGI
+
+$HTTP["url"] =~ "^/jsonptunnel/service.*$" {
+  fastcgi.server = ( "/jsonptunnel/service" =>
+      ( "localhost" =>
+        ( "bin-path"    => "/home/alan/fcgi-bin/jsonptunnel.fcgi",
+        "docroot"     => "/home/alan/fcgi-bin/jsonptunnel",
+        "host"        => "127.0.0.1",
+        "port"        => 1026,
+        "check-local" => "disable" 
+        )
+    )
+  )
+}
