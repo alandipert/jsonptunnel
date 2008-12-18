@@ -21,11 +21,6 @@ int initReq(struct extRequest *req) {
     return 0;
   } 
 
-  if(!parseMethod(req)) {
-    exitStatus(400, "Error parsing HTTP method.\n");
-    return 0;
-  }
-
   if(!parseArguments(req)) {
     exitStatus(400, "Error parsing passed arguments or values.\n");
     return 0;
@@ -38,39 +33,8 @@ int initReq(struct extRequest *req) {
    */
   parseCallback(req);
 
-  /*
-   * If extCache is set to anything, create
-   * a hash using hash_str in cache.c and 
-   * set req->hash to this number.
-   *
-   * extCache is optional.
-   */
-  parseCache(req);
-
   return 1;
 
-}
-/*
- * Look for the external request method
- * and load it into req.
- */
-int parseMethod(struct extRequest *req) {
-
-  int return_status = 0;
-  int methodLength = 5;
-  char method[methodLength];
-
-  if(cgiFormString(METHOD_PARAM_NAME, method, methodLength) == cgiFormSuccess) {
-    if(strcmp(&method[0], "GET") == 0) {
-      req->method = METHOD_GET; 
-      return_status = 1;
-    } else if(strcmp(&method[0], "POST") == 0) {
-      return_status = 1;
-      req->method = METHOD_POST;
-    } 
-  }
-
-  return return_status;
 }
 
 /*
@@ -93,9 +57,15 @@ int countArguments(void) {
 
   cgiStringArrayFree(array);
 
-  //We subtract two for extURL and extMethod
-  return count-2;
+  //subtract 'api' variables
+  if(strstr(cgiQueryString,URL_PARAM_NAME))
+    count--;
 
+  if(strstr(cgiQueryString,CALLBACK_PARAM_NAME))
+    count--;
+
+  fprintf(stdout, "%i variables were passed.", count);
+  return count;
 }
 
 /*
@@ -116,29 +86,6 @@ struct extArg * makeArg(char *name, char *value) {
   strcpy(arg->argVal, value);
 
   return arg;
-}
-
-/*
- * Check for an "extCache" parameter
- * and don't worry about its value.  If it's set,
- * we'll figured out the FNV hash of the query string
- * and store it in req.  Then later before curl gets called
- * we'll check for a cached object to return.
- *
- * If it's not set, we set req->hash to 0 and don't
- * cache anything.
- */
-int parseCache(struct extRequest *req) {
-  int return_status = 0;
-  int cacheLength = 0;
-  if(cgiFormStringSpaceNeeded(CACHE_PARAM_NAME, &cacheLength) == cgiFormSuccess) {
-    req->hash = hash_str(cgiQueryString);
-    return_status = 1;
-  } else {
-    req->hash = 0;
-  }
-
-  return return_status;
 }
 
 /*
@@ -200,13 +147,14 @@ int parseArguments(struct extRequest *req) {
 
     /* If the name is not a URL, method, or callback, we need to add it */
     if(strcmp(*arrayStep, URL_PARAM_NAME) != 0 &&
-       strcmp(*arrayStep, METHOD_PARAM_NAME) != 0) {
+       strcmp(*arrayStep, CALLBACK_PARAM_NAME) != 0) {
 
       /* Get the length of the passed string so our buffer is big enough. */
       cgiFormStringSpaceNeeded(*arrayStep, &val_size);
       val = (char*)malloc(sizeof(char)*val_size);
       cgiFormString(*arrayStep, val, val_size);
       req->args[arg_num++] = makeArg(*arrayStep, val);
+
       /* The val has been passed to makeArg, so free it */
       free(val);
 
