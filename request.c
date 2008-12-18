@@ -64,7 +64,6 @@ int countArguments(void) {
   if(strstr(cgiQueryString,CALLBACK_PARAM_NAME))
     count--;
 
-  fprintf(stdout, "%i variables were passed.", count);
   return count;
 }
 
