@@ -1,6 +1,6 @@
 # You might need to change this to point to the location
 # of the FastCGI header files.
-FCGI_INCLUDE=-I/usr/local/include
+FCGI_INCLUDE=-I/usr/local/include/fcgi_stdio.h
 FCGI_LIBS=-lfcgi
 
 CC=gcc
