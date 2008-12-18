@@ -18,11 +18,11 @@ OVERVIEW:
   jsonptunnel.cgi itself looks for two GET variables, one of which 
   is required:
 
-    REQUIRED:
+    REQUIRED PARAMETERS:
 
       1. extURL - the URL to POST to.
 
-    OPTIONAL:
+    OPTIONAL PARAMETERS:
 
       1. extCallback - wraps the off-site output with a function
                        named this parameter, taking the returned
@@ -68,10 +68,17 @@ COMPILING:
 
 DEPENDENCIES:
 
-  1. libcurl
-  2. libcgic - download automatically with 'make get-cgic' command.
+  1. libcurl - http://curl.haxx.se/
+  2. libcgic - http://www.boutell.com/cgic/ 
+               download and patch automatically with 'make get-cgic' command.
+  3. FastCGI - http://www.fastcgi.com/
 
-  jsonptunnel requires libcurl and libcgic.  libcurl is pretty common,
+  jsonptunnel requires libcurl, libcgic, and fastcgi.  libcurl is pretty common,
   libcgic is not.  The 'make get-cgic' command downloads cgic into the
   current directory and a subsequent make command will build the library
   and link against it.
+
+THANKS:
+
+  I'd like to thank the CURL team, Boutell.com, and the FastCGI guys
+  for making such awesome software.
