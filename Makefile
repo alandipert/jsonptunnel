@@ -1,7 +1,10 @@
-CC=gcc
-LIBS=-L/usr/local/lib cgic/libcgic.a -lcurl
+# You might need to change this to point to the location
+# of the FastCGI header files.
 FCGI_INCLUDE=-I/usr/local/include
 FCGI_LIBS=-lfcgi
+
+CC=gcc
+LIBS=-L/usr/local/lib cgic/libcgic.a -lcurl
 INCLUDE=-Icgic 
 CFLAGS+=-g -Wall
 #CFLAGS+=-O2
@@ -22,7 +25,7 @@ jsonptunnel.cgi: $(OBJECTS) libcgic
 	$(CC) $(CFLAGS) $(INCLUDE) -o jsonptunnel.cgi  $(OBJECTS) $(LIBS)
 
 jsonptunnel.fcgi: $(OBJECTS) libcgic
-	$(CC) $(CFLAGS) -DUSE_FASTCGI=1 $(INCLUDE) $(FCGI_INCLUDE) -o jsonptunnel.fcgi  $(OBJECTS) $(LIBS) $(FCGI_LIBS)
+	$(CC) $(CFLAGS) -DUSE_FASTCGI=1 $(FCGI_INCLUDE) $(INCLUDE) -o jsonptunnel.fcgi  $(OBJECTS) $(LIBS) $(FCGI_LIBS)
 
 libcgic:
 	$(QUIET_SUBDIR0)cgic $(QUIET_SUBDIR1) libcgic.a

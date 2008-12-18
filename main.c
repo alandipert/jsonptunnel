@@ -8,11 +8,7 @@
  * HTTP action to cgiOut (stdout).
  */
 
-#if USE_FASTCGI 
-#include <fcgi_stdio.h>
-#else
 #include <stdio.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
 #include "cgic/cgic.h"
