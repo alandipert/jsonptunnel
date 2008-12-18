@@ -1,10 +1,13 @@
 # You might need to change this to point to the location
 # of the FastCGI header files.
-FCGI_INCLUDE=-I/usr/local/include/fcgi_stdio.h
+FCGI_INCLUDE=-I/usr/local/include/
 FCGI_LIBS=-lfcgi
 
+# You might also have to change where CURL lives:
+CURL_LIBS=-L/usr/local/lib -lcurl
+
 CC=gcc
-LIBS=-L/usr/local/lib cgic/libcgic.a -lcurl
+LIBS=$(CURL_LIBS) cgic/libcgic.a
 INCLUDE=-Icgic 
 CFLAGS+=-g -Wall
 #CFLAGS+=-O2
