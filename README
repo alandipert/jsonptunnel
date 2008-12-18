@@ -65,9 +65,6 @@ COMPILING:
 
   To switch between fcgi and cgi builds, 'make clean'
   before running 'make cgi' or 'make fcgi.'
-  1. make get-cgic
-  2. make
-  3. copy the created jsonptunnel.cgi to your cgi-bin (or equivalent).
 
 DEPENDENCIES:
 
