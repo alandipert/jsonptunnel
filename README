@@ -61,7 +61,7 @@ COMPILING:
 
   1. make get-cgic
   2. make fcgi
-  3. Configure your web server to run jsonptunnel.fcgi. See "LIGHTTPD.CONF.EXAMPLE"
+  3. Configure your web server to run jsonptunnel.fcgi. See "LIGHTTPD.EXAMPLE.CONF"
      for an example configuration.
 
   You may have to modify the Makefile variable FCGI_INCLUDE to point 
