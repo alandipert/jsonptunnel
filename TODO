@@ -1,6 +1,8 @@
-Caching mechanism. - in progress.
- Perhaps extCache could be set to a time: IE extCache=5m.  If the cached copy
- of the request is older than 5 minutes, fetch it again.
-Implement as a FastCGI.
-In curl.c, get curl_easy_escape to work (it's broken for some reason).
-Improve documentation, provide Javascript example using popular libraries.
+Support more HTTP verbs:
+  PUT, DELETE.
+Ideally all REST verbs would be possible
+with jsonptunnel.  This is just a matter
+of adding more functions to fetch.c
+and modifiying request.c to handle different
+"extMethods."  The old branches show how it used
+to work when GET was also supported.
