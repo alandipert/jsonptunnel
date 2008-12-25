@@ -1,3 +1,8 @@
+/*
+ * Functions for printing HTTP error
+ * codes and error messages.
+ */
+
 #ifdef USE_FASTCGI 
 #include <fcgi_stdio.h>
 #else

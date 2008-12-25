@@ -1,3 +1,9 @@
+/*
+ * Handle the creation, population,
+ * and clean destruction of the
+ * extRequest struct.
+ */
+
 #ifdef USE_FASTCGI 
 #include <fcgi_stdio.h>
 #else

@@ -1,3 +1,9 @@
+/*
+ * Use the CURL api to POST
+ * to a remote URL and print
+ * the returned data.
+ */
+
 #ifdef USE_FASTCGI 
 #include <fcgi_stdio.h>
 #else
