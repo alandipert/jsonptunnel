@@ -1,8 +1,9 @@
 Support more HTTP verbs:
   PUT, DELETE.
-Ideally all REST verbs would be possible
-with jsonptunnel.  This is just a matter
-of adding more functions to fetch.c
-and modifiying request.c to handle different
-"extMethods."  The old branches show how it used
-to work when GET was also supported.
+
+Ideally all REST verbs would be possible with jsonptunnel.  This
+is just a matter of adding more functions to fetch.c and modifiying
+request.c to handle different "extMethods."  The old branches show
+how it used to work when GET was also supported.
+
+Look into SCGI.
