@@ -186,8 +186,11 @@ int parseURL(struct extRequest *req) {
     if(urlLength > 0) {
       req->url = (char*)malloc(sizeof(char)*urlLength);
       if(cgiFormString(URL_PARAM_NAME, req->url, urlLength) == cgiFormSuccess) {
-        /* Success */
-        return_status = 1;
+        //Only make this URL accessible
+        if(strcmp(req->url, "http://dipert.org/alan/calc.php") == 0) {
+          /* Success */
+          return_status = 1;
+        }
       } else {
         free(req->url);
       }
